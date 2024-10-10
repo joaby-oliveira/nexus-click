@@ -1,0 +1,45 @@
+version: '3.8'
+services:
+  strapi:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: strapi
+    ports:
+      - '1337:1337'
+    depends_on:
+      - postgres_strapi_1
+    environment:
+      HOST: ${HOST}
+      PORT: ${PORT}
+      APP_KEYS: ${APP_KEYS}
+      API_TOKEN_SALT: ${API_TOKEN_SALT}
+      ADMIN_JWT_SECRET: ${ADMIN_JWT_SECRET}
+      TRANSFER_TOKEN_SALT: ${TRANSFER_TOKEN_SALT}
+      DATABASE_CLIENT: ${DATABASE_CLIENT}
+      DATABASE_NAME: ${DATABASE_NAME}
+      DATABASE_HOST: ${DATABASE_HOST}
+      DATABASE_PORT: ${DATABASE_PORT}
+      DATABASE_USERNAME: ${DATABASE_USERNAME}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET}
+      NODE_ENV: ${NODE_ENV}
+    volumes:
+      - ./src:/app/src
+    restart: unless-stopped
+
+  postgres_strapi_1:
+    image: postgres:17.0-alpine3.19
+    container_name: postgres_strapi_1
+    environment:
+      POSTGRES_USER: ${DATABASE_USERNAME}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+      POSTGRES_DB: ${DATABASE_NAME}
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data_1:/var/lib/postgresql/data
+    restart: unless-stopped
+
+volumes:
+  postgres_data_1:
